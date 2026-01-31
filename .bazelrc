@@ -1,0 +1,77 @@
+# 1. Base C++ Configuration
+build --cxxopt=-std=c++17
+build --cxxopt=-fno-exceptions
+build --features=-use_header_modules
+build --macos_minimum_os=11.0
+build --test_output=errors
+
+# 2. Performance & Strategy
+build --spawn_strategy=standalone
+test --test_strategy=standalone
+
+# 3. Quality & Warnings
+build --cxxopt="-Wall" --cxxopt="-Wextra" --cxxopt="-Werror"
+build --cxxopt="-Werror=unused-function"
+build --copt="-O2"
+# Handle the "Unused Argument" error for Clang when using certain features
+build --copt="-Wno-unused-command-line-argument"
+
+# 4. Universal Hardening
+build --copt="-fstack-protector-strong"
+build --copt="-D_FORTIFY_SOURCE=2"
+build --copt="-D_GLIBCXX_ASSERTIONS"
+build --copt="-D_GLIBCXX_DEBUG"
+
+# 5. Compiler-Specific Flags
+build:gcc --copt="-fstack-clash-protection"
+build:gcc --copt="-fcf-protection=full"
+build:clang --copt="-fstack-clash-protection"
+
+# 6. Aspect Rules Lint (Clang-Tidy)
+build --aspects=//:linters.bzl%clang_tidy
+build --output_groups=report
+
+# 7. Sanitizers
+# ASan: bazel test --config=asan //...
+build:asan --features=asan
+test:asan --features=asan
+# MSan: bazel test --config=msan //...
+build:msan --features=msan
+test:msan --features=msan
+# TSan: bazel test --config=tsan //...
+build:tsan --features=tsan
+test:tsan --features=tsan
+# UBSan: bazel test --config=ubsan //...
+build:ubsan --features=ubsan
+test:ubsan --features=ubsan
+
+# Hermeticity fixes for sanitizers (stops 'undeclared inclusion' errors)
+build:asan --copt=-fno-sanitize-ignorelist
+build:asan --features=-layering_check
+build:tsan --copt=-fno-sanitize-ignorelist
+build:tsan --features=-layering_check
+build:msan --copt=-fno-sanitize-ignorelist
+build:msan --features=-layering_check
+build:ubsan --copt=-fno-sanitize-ignorelist
+build:ubsan --features=-layering_check
+
+# 8. Platform Specific Configuration
+common --enable_platform_specific_config
+
+# macOS: Linker setup for LLVM toolchain and Sanitizers
+# These allow binaries to find the hermetic LLVM libraries
+# Covers root targets (../../..) and 1-level deep targets (../../../../)
+build:macos --linkopt=-Wl,-rpath,@loader_path/../../../external/toolchains_llvm++llvm+llvm_toolchain_llvm/lib
+build:macos --linkopt=-Wl,-rpath,@loader_path/../../../../external/toolchains_llvm++llvm+llvm_toolchain_llvm/lib
+build:macos --linkopt=-Wl,-rpath,@loader_path/../../../external/toolchains_llvm++llvm+llvm_toolchain_llvm/lib/clang/17/lib/darwin
+build:macos --linkopt=-Wl,-rpath,@loader_path/../../../../external/toolchains_llvm++llvm+llvm_toolchain_llvm/lib/clang/17/lib/darwin
+
+# Linux: Linker setup
+build:linux --linkopt=-Wl,-z,origin
+build:linux --linkopt=-Wl,-rpath='$$ORIGIN/../lib'
+
+# 9. External Dependencies Handling
+# Silence warnings and re-enable exceptions in external libraries
+build --per_file_copt="external/.*@-Wno-uninitialized"
+build --per_file_copt="external/.*@-fexceptions"
+build:gcc --per_file_copt="external/.*@-Wno-maybe-uninitialized"

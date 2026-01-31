@@ -1,0 +1,57 @@
+load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test")
+load("@aspect_rules_lint//format:defs.bzl", "format_multirun")
+load("//:linters.bzl", "clang_tidy_test")
+
+exports_files([".clang-tidy"])
+
+sh_binary(
+    name = "clang_format_hermetic",
+    srcs = ["scripts/clang_format_wrapper.sh"],
+    data = ["@llvm_toolchain//:clang-format"],
+    deps = ["@bazel_tools//tools/bash/runfiles"],
+    visibility = ["//visibility:public"], 
+)
+
+sh_binary(
+    name = "clang_tidy_hermetic",
+    srcs = ["scripts/clang_tidy_wrapper.sh"],
+    data = ["@llvm_toolchain//:clang-tidy"],
+    deps = ["@bazel_tools//tools/bash/runfiles"],
+    visibility = ["//visibility:public"], 
+)
+
+format_multirun(
+    name = "format",
+    cc = ":clang_format_hermetic",
+    disable_git_attribute_checks = True,
+)
+
+cc_library(
+    name = "hello",
+    srcs = ["hello.cc"],
+    hdrs = ["hello.h"],
+    visibility = ["//visibility:public"],
+    deps = [
+        "@abseil-cpp//absl/strings",
+    ],
+)
+
+cc_test(
+    name = "hello_test",
+    srcs = ["hello_test.cc"],
+    visibility = ["//visibility:public"],
+    deps = [
+        ":hello",
+        "@googletest//:gtest_main",
+    ],
+)
+
+# This target allows running clang-tidy on all targets in the workspace
+# Usage: bazel test //:clang_tidy_test
+clang_tidy_test(
+    name = "clang_tidy_test",
+    srcs = [
+        ":hello",
+        ":hello_test",
+    ],
+)

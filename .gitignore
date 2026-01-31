@@ -1,0 +1,11 @@
+# Bazel outputs
+/bazel-*
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Project specific
+slop.db
