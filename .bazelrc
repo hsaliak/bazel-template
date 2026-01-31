@@ -28,8 +28,9 @@ build:gcc --copt="-fcf-protection=full"
 build:clang --copt="-fstack-clash-protection"
 
 # 6. Aspect Rules Lint (Clang-Tidy)
-build --aspects=//:linters.bzl%clang_tidy
-build --output_groups=report
+# To run clang-tidy: bazel build --config=lint //...
+build:lint --aspects=//:linters.bzl%clang_tidy
+build:lint --output_groups=report
 
 # 7. Sanitizers
 # ASan: bazel test --config=asan //...
