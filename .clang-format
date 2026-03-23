@@ -2,14 +2,14 @@ BasedOnStyle: Google
 ColumnLimit: 120
 IndentWidth: 2
 AllowShortFunctionsOnASingleLine: All
-Standard: c++17
+Standard: c++23
 IncludeBlocks: Regroup
 IncludeCategories:
   - Regex:           '^<[a-z_]*\.h>'
     Priority:        1
   - Regex:           '^<[a-z_]*>'
     Priority:        2
-  - Regex:           '^"(absl|nlohmann|gtest|gmock)/'
+  - Regex:           '^"(nlohmann|gtest|gmock)/'
     Priority:        3
   - Regex:           '^".*"'
     Priority:        4

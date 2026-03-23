@@ -31,8 +31,22 @@ cc_library(
     srcs = ["hello.cc"],
     hdrs = ["hello.h"],
     visibility = ["//visibility:public"],
+)
+
+cc_test(
+    name = "hello_fuzz_test",
+    srcs = ["hello_fuzz_test.cc"],
+    copts = [
+        "-Wno-unused-parameter",
+        "-Wno-deprecated-declarations",
+        "-Wno-sign-compare",
+    ],
+    visibility = ["//visibility:public"],
     deps = [
-        "@abseil-cpp//absl/strings",
+        ":hello",
+        "@fuzztest//fuzztest",
+        "@fuzztest//fuzztest:fuzztest_gtest_main",
+        "@googletest//:gtest",
     ],
 )
 
@@ -52,6 +66,7 @@ clang_tidy_test(
     name = "clang_tidy_test",
     srcs = [
         ":hello",
+        ":hello_fuzz_test",
         ":hello_test",
     ],
 )

@@ -1,3 +1,5 @@
+check_direct_dependencies=off
+
 # 1. Base C++ Configuration
 build --cxxopt=-std=c++17
 build --cxxopt=-fno-exceptions
@@ -74,5 +76,11 @@ build:linux --linkopt=-Wl,-rpath='$$ORIGIN/../lib'
 # 9. External Dependencies Handling
 # Silence warnings and re-enable exceptions in external libraries
 build --per_file_copt="external/.*@-Wno-uninitialized"
+build --per_file_copt="external/.*@-Wno-unused-parameter"
+build --per_file_copt="external/.*@-Wno-sign-compare"
+build --per_file_copt="external/.*@-Wno-deprecated-declarations"
+build --per_file_copt="external/.*@-Wno-missing-field-initializers"
+build --per_file_copt="external/.*@-Wno-unused-function"
 build --per_file_copt="external/.*@-fexceptions"
+build --per_file_copt="external/.*@-Wno-error"
 build:gcc --per_file_copt="external/.*@-Wno-maybe-uninitialized"

@@ -1,11 +1,12 @@
 module(
     name = "cpp_template",
     version = "0.1.0",
-    bazel_compatibility = [">=8.0.0"],
+    bazel_compatibility = [">=8.0.0", "<=8.99.99"],
 )
 
-bazel_dep(name = "abseil-cpp", version = "20240116.2")
 bazel_dep(name = "googletest", version = "1.14.0.bcr.1")
+bazel_dep(name = "abseil-cpp", version = "20240116.2")
+bazel_dep(name = "fuzztest", version = "20260219.0")
 bazel_dep(name = "rules_cc", version = "0.1.1")
 bazel_dep(name = "aspect_rules_lint", version = "1.0.3")
 bazel_dep(name = "aspect_bazel_lib", version = "2.7.7")

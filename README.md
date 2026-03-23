@@ -1,6 +1,6 @@
 # C++ Bazel Template
 
-A hermetic C++ template using Bazel, Clang 17, and modern C++17 standards. This project follows a flat hierarchy for simplicity and includes integrated linting and formatting.
+A hermetic C++ template using Bazel, Clang 17, and modern C++23 standards. This project follows a flat hierarchy for simplicity and includes integrated linting, formatting, testing, and fuzzing.
 
 ## Features
 
@@ -8,8 +8,8 @@ A hermetic C++ template using Bazel, Clang 17, and modern C++17 standards. This 
 -   **Integrated Quality Tools**:
     -   **Clang-Tidy**: Static analysis integrated into the Bazel graph.
     -   **Clang-Format**: Automated code formatting.
--   **Modern Dependencies**: Pre-configured with Abseil (C++ Common Libraries) and GoogleTest.
--   **Hardened Configuration**: Optimized `.bazelrc` with C++17 enabled and specific RPATH fixes for macOS hermeticity.
+-   **Modern Dependencies**: Pre-configured with GoogleTest and FuzzTest.
+-   **Hardened Configuration**: Optimized `.bazelrc` with C++23 enabled and specific RPATH fixes for macOS hermeticity.
 
 ## Getting Started
 
@@ -45,7 +45,7 @@ A hermetic C++ template using Bazel, Clang 17, and modern C++17 standards. This 
 
 ## C++ Policy
 - **No Exceptions**: The project is configured with `-fno-exceptions`. External dependencies are exempted and can still use exceptions if needed.
-- **C++17**: The project uses C++17 as the default standard.
+- **C++23**: The project uses C++23 as the default standard.
 
 ## Using as a Template for New Projects
 
@@ -81,6 +81,7 @@ Then, define your own targets in `BUILD.bazel`.
 ## Project Structure
 -   `hello.h` / `hello.cc`: Sample source code.
 -   `hello_test.cc`: Sample unit test.
+-   `hello_fuzz_test.cc`: Sample fuzz test.
 -   `scripts/`: Internal wrappers for hermetic toolchain tools.
 -   `linters.bzl`: Starlark logic for linter integration.
 -   `BUILD.bazel`: Main build definition file.
